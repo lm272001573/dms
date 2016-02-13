@@ -4,7 +4,6 @@ package cn.dms.dto;
 public class DialysisInfoReq  {
 	private String name;// 姓名
 	private String date; // 透析日期
-
 	public String getName() {
 		return name;
 	}
