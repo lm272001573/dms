@@ -12,7 +12,7 @@ public class DialysisInfo {
 	private String second;
 	private String third;
 	private String fourth;
-	private String fifth; 
+	private String fifth;  
 
 	public int getId() {
 		return id;
