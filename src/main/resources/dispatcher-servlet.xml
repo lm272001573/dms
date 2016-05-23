@@ -23,7 +23,7 @@
     <!-- 激活@Controller模式 -->
     <mvc:annotation-driven />
 
-    <!-- 国际化资源定义，webank-sdk-web 用到 -->
+    <!-- 国际化资源定义-->
     <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
         <property name="basename" value="classpath:messages" />
         <property name="fileEncodings" value="UTF-8" />

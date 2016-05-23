@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.dms.dao.UcPermissionMapper" >
+  <resultMap id="BaseResultMap" type="cn.dms.entity.UcPermission" >
+    <result column="res_code" property="resCode" jdbcType="VARCHAR" />
+    <result column="res_name" property="resName" jdbcType="VARCHAR" />
+    <result column="ress_content" property="ressContent" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="res_type" property="resType" jdbcType="VARCHAR" />
+    <result column="res_sequence" property="resSequence" jdbcType="INTEGER" />
+    <result column="res_parent" property="resParent" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    res_code, res_name, ress_content, status, res_type, res_sequence, res_parent
+  </sql>
+  
+  <select id="SelectAllAuth" resultMap="BaseResultMap">
+  	select 
+    <include refid="Base_Column_List" />
+    from um_permission
+  </select>
+  
+  <select id="selectByIdAndUidAndType" resultMap="BaseResultMap">
+    select distinct p.res_code,p.res_name,p.ress_content,p.status,p.res_type,p.res_sequence,p.res_parent
+        from um_menu m, um_user_role u, um_role_permission r, um_permission p
+    	where u.user_id = #{userId,jdbcType=VARCHAR} and m.id = #{id,jdbcType=INTEGER} and u.role_code = r.role_code and r.res_code = p.res_code and p.res_code = m.res_code and p.res_type=#{res_type,jdbcType=VARCHAR}
+  </select>
+  
+   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from um_role_permission
+    where role_code=#{role_code,jdbcType=VARCHAR}
+    and res_code=#{res_code,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from um_role_permission
+    where role_code=#{role_code,jdbcType=VARCHAR}
+    and res_code=#{res_code,jdbcType=VARCHAR}
+  </delete>
+   <delete id="deleteByRoleCode" parameterType="java.lang.String" >
+    delete from um_role_permission
+    where role_code=#{role_code,jdbcType=VARCHAR}
+  </delete>
+  
+  
+  <update id="updateByPrimaryKeySelective" parameterType="cn.dms.entity.UcPermission" >
+    update um_permission
+    <set >
+      <if test="res_name != null" >
+        res_name = #{res_name,jdbcType=VARCHAR},
+      </if>
+      <if test="ress_content != null" >
+        ress_content = #{ress_content,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="res_type != null" >
+        res_type = #{res_type,jdbcType=VARCHAR},
+      </if>
+      <if test="res_sequence != null" >
+        res_sequence = #{res_sequence,jdbcType=INTEGER},
+      </if>
+      <if test="res_parent != null" >
+        res_parent = #{res_parent,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where res_code = #{res_code,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.dms.entity.UcPermission" >
+    update um_permission
+    set res_name = #{res_name,jdbcType=VARCHAR},
+      ress_content = #{ress_content,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      res_type = #{res_type,jdbcType=VARCHAR},
+      res_sequence = #{res_sequence,jdbcType=INTEGER},
+      res_parent = #{res_parent,jdbcType=VARCHAR}
+    where res_code = #{res_code,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="selectPermissionBySelective" parameterType="cn.dms.entity.UcPermission" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from um_permission
+    where 1=1
+      <if test="res_code != null">
+        res_code = #{res_code,jdbcType=VARCHAR}
+      </if>
+  </select>
+  
+  
+  <resultMap id="Query_BaseResultMap" type="cn.dms.entity.UcPermission" >
+    <result column="res_code" property="res_code" jdbcType="VARCHAR" />
+    <result column="res_name" property="res_name" jdbcType="VARCHAR" />
+    <result column="menu_id" property="menu_id" jdbcType="VARCHAR" />
+    <result column="menu_name" property="menu_name" jdbcType="VARCHAR" />
+  </resultMap>
+  <select id="queryPermissionOfRole" parameterType="cn.dms.entity.UcPermission" resultMap="Query_BaseResultMap">
+     select c.res_code , d.text as menu_name ,c.text as res_name,d.id as menu_id  from um_menu d join 
+	 ( 
+	 select a.id,a.text,a.res_code from um_menu a join um_permission b on  a.res_code = b.res_code join  um_role_permission e on b.res_code = e.res_code 
+		 where 1=1 
+		 <if test="res_type == null">
+	       and res_type is null
+	      </if>
+	       <if test="res_type != null">
+	       and res_type = #{res_type,jdbcType=VARCHAR}
+	      </if>
+		  <if test="role_code != null">
+	       and e.role_code = #{role_code,jdbcType=VARCHAR}
+	      </if>
+		 ) c 
+	 on c.id = d.id group by c.res_code
+  </select>
+  
+  <select id="queryAllBtnPermission" parameterType="cn.dms.entity.UcPermission" resultMap="Query_BaseResultMap">
+     select c.res_code , d.text as menu_name ,c.text as res_name,d.id as menu_id  from um_menu d join 
+	 ( 
+	   select a.id,a.text,a.res_code from um_menu a join um_permission b on  a.res_code = b.res_code
+		 where 1=1 
+		 <if test="res_type == null">
+	       and res_type is null
+	      </if>
+	       <if test="res_type != null">
+	       and res_type = #{res_type,jdbcType=VARCHAR}
+	      </if>
+		  <if test="role_code != null">
+	       and e.role_code = #{role_code,jdbcType=VARCHAR}
+	      </if>
+		 ) c 
+	 on c.id = d.id group by c.res_code
+  </select>
+  
+  <insert id="insert" parameterType="cn.dms.entity.UcPermission" >
+    insert into uc_permission (res_code, res_name, ress_content, 
+      status, res_type, res_sequence, 
+      res_parent)
+    values (#{resCode,jdbcType=VARCHAR}, #{resName,jdbcType=VARCHAR}, #{ressContent,jdbcType=VARCHAR}, 
+      #{status,jdbcType=VARCHAR}, #{resType,jdbcType=VARCHAR}, #{resSequence,jdbcType=INTEGER}, 
+      #{resParent,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.dms.entity.UcPermission" >
+    insert into uc_permission
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="resCode != null" >
+        res_code,
+      </if>
+      <if test="resName != null" >
+        res_name,
+      </if>
+      <if test="ressContent != null" >
+        ress_content,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="resType != null" >
+        res_type,
+      </if>
+      <if test="resSequence != null" >
+        res_sequence,
+      </if>
+      <if test="resParent != null" >
+        res_parent,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="resCode != null" >
+        #{resCode,jdbcType=VARCHAR},
+      </if>
+      <if test="resName != null" >
+        #{resName,jdbcType=VARCHAR},
+      </if>
+      <if test="ressContent != null" >
+        #{ressContent,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="resType != null" >
+        #{resType,jdbcType=VARCHAR},
+      </if>
+      <if test="resSequence != null" >
+        #{resSequence,jdbcType=INTEGER},
+      </if>
+      <if test="resParent != null" >
+        #{resParent,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>

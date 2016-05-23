@@ -1,0 +1,76 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>透析管理系统</title>
+
+<script src="js/jquery-easyui-1.4.4/jquery.min.js"
+	type="text/javascript"></script>
+<script src="js/jquery-easyui-1.4.4/jquery.easyui.min.js"
+	type="text/javascript"></script>
+<script src="js/jquery-easyui-1.4.4/locale/easyui-lang-zh_CN.js"
+	type="text/javascript"></script>
+<link href="js/jquery-easyui-1.4.4/themes/default/easyui.css"
+	rel="stylesheet" type="text/css" />
+<link href="js/jquery-easyui-1.4.4/themes/icon.css" rel="stylesheet"
+	type="text/css" />
+<script src="js/easyuiplugin.js" type="text/javascript"></script>
+<link href="css/index.css" rel="stylesheet" type="text/css">
+</head>
+<body class="easyui-layout" id="layout-wrapper">
+
+	<div id='loading-mask' class="loading loading-bg"></div>
+
+	<div id="user_banner" class="menu-bg" region="north" border="true">
+		<div class="left-menu">
+			<div class="logo-title">透析管理系统</div>
+		</div>
+		<div class="right-menu">
+			<ul>
+				<li><span id="user_id"></span></li>
+				<li><a href="#" id="logoutBtn">退出</a></li>
+			</ul>
+		</div>
+	</div>
+
+	<!--系统版权声明
+	<div id='footer' region="south" border="false">
+		<center>Copyright &copy; XXX公司</center>
+	</div>  -->
+
+	<!--菜单导航  -->
+	<div id="easyui_menuTree" data-options="region:'west',split:true"
+		title="系统菜单" style="width: 280px;">
+		<ul id="menuTree"></ul>
+	</div>
+
+	<!--IFRMAME区  -->
+	<div id="centerPane" region="center" style="overflow-y: hidden">
+		<div id="tabs" class="easyui-tabs" fit="true" border="false" />
+	</div>
+
+	<div id="menuBtns" class="easyui-menu" style="width: 150px;">
+		<div id="menuBtns-tabclose">关闭</div>
+		<div class="menu-sep"></div>
+		<div id="menuBtns-tabcloseall">全部关闭</div>
+		<div class="menu-sep"></div>
+		<div id="menuBtns-tabcloseother">除此之外全部关闭</div>
+		<div class="menu-sep"></div>
+		<div id="menuBtns-tabcloseright">当前页右侧全部关闭</div>
+		<div class="menu-sep"></div>
+		<div id="menuBtns-tabcloseleft">当前页左侧全部关闭</div>
+		<div class="menu-sep"></div>
+	</div>
+
+	<!-- 	<script type='text/javascript' src='s/config.js'></script>
+	 -->
+</body>
+<script type='text/javascript' src='js/config.js'></script>
+<script type='text/javascript'
+	src='js/common.js'></script>
+<script type='text/javascript' src='js/menu.js'></script>
+<script type='text/javascript'
+	src='js/index.js'></script>
+</html>

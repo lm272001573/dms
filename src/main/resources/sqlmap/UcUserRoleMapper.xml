@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.dms.dao.UcUserRoleMapper">
+
+  <resultMap id="BaseResultMap" type="cn.dms.entity.UcUserRole">
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="role_code" jdbcType="VARCHAR" property="roleCode" />
+  </resultMap>
+   <sql id="Base_Column_List">
+    user_id, role_code
+  </sql>
+  <insert id="insert" parameterType="cn.dms.entity.UcUserRole">
+    insert into uc_user_role (user_id, role_code)
+    values (#{userId,jdbcType=VARCHAR}, #{roleCode,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.dms.entity.UcUserRole">
+    insert into uc_user_role
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="roleCode != null">
+        role_code,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="roleCode != null">
+        #{roleCode,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <delete id="deleteByUserId" parameterType="java.lang.String">
+    delete from um_user_role
+    where 
+     user_id = #{user_id,jdbcType=VARCHAR}
+  </delete>
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from um_user_role
+    where role_code = #{role_code,jdbcType=VARCHAR}
+    and user_id={user_id,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="cn.dms.entity.UcUserRole">
+    delete from um_user_role
+    where user_id = #{user_id,jdbcType=VARCHAR}
+  </delete>
+  
+  <delete id="deleteByRoleCode" parameterType="cn.dms.entity.UcUserRole">
+    delete from um_user_role
+    where role_code = #{role_code,jdbcType=VARCHAR}
+  </delete>
+  
+   <select id="SelectAllUserRole" resultMap="BaseResultMap">
+  	select 
+    <include refid="Base_Column_List" />
+    from uc_user_role
+  </select>
+  
+   <insert id="batchInsert" parameterType="java.util.List">
+    insert into uc_user_role (user_id, role_code)
+    values 
+     <foreach collection="list" index="index" item="item" separator=",">
+    (#{item.user_id,jdbcType=VARCHAR}, #{item.role_code,jdbcType=VARCHAR} 
+     )
+     </foreach>
+  </insert>
+  
+  <select id="selectByDTO" parameterType="cn.dms.entity.UcUserRole" resultMap="BaseResultMap">
+   select a.user_id ,group_concat(b.name separator '、') as role_name ,group_concat(a.role_code separator ' ')  as role_code 
+     from    
+          uc_user_role a join     um_role b 
+     on a.role_code = b.id 
+		where 1=1
+	<if test="user_id != null">
+       and a.user_id = #{user_id,jdbcType=VARCHAR}
+    </if>
+    <if test="role_code != null">
+       and a.role_code = #{role_code,jdbcType=VARCHAR}
+    </if>
+           group by a.user_id order by a.user_id
+	<if test="is_page == true">
+       limit #{start_row,jdbcType=INTEGER},#{rows,jdbcType=INTEGER}
+    </if> 
+  </select>
+  
+  <select id="findCount" parameterType="cn.dms.entity.UcUserRole" resultType="java.lang.Integer">
+	select count(1) from 
+	 ( 
+        select a.user_id ,group_concat(b.name separator ' ') as role_name ,group_concat(a.role_code separator ' ')  as role_code
+          from     uc_user_role a join     um_role b   on a.role_code = b.id group by a.user_id
+	  ) t
+	 where 1=1
+  </select>
+</mapper>

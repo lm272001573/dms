@@ -1,0 +1,209 @@
+  @charset "utf-8";
+* {
+	font-size: 13px;
+	margin: 0;
+	padding: 0;
+	margin: 0;
+}
+
+html, body {
+	height: 100%;
+	overflow: hidden;
+}
+
+body {
+	font-family: '微软雅黑';
+	margin: 0 auto;
+}
+
+ul {
+	display: block;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+li {
+	display: block;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+iput[disabled], select[disabled], textarea[disabled] {
+	background-color: white;
+}
+
+input:disabled, select:disabled, textarea:disabled {
+	background-color: white;
+}
+
+input[type="text"], input[type="password"], select, textarea {
+	border: 1px solid #95B8E7;
+}
+
+/*系统登录样式*/
+.login_bg {
+	background-image: url(../image/login/login_bg.jpg);
+	background-repeat: repeat;
+	background-position: center top;
+	overflow: hidden;
+}
+
+.login {
+	position:absolute;
+	left:50%;
+	top:50%;
+	margin-left:-150px;
+	margin-top:-180px;
+	width: 360px;
+	height: 300px;
+	background: url(../image/login/loginbox.png) no-repeat;
+}
+
+.login ul {
+	margin-top: 70px;
+}
+
+.login ul li {
+	padding-top: 30px;
+}
+
+.login_input_box {
+	width: 200px;
+	height: 30px;
+	border: none;
+	margin-left: 65px;
+	padding-left: 35px;
+	padding-top: 4px;
+	font-size: 12px;
+}
+
+.loginuser {
+	background: url(../image/login/user.png) no-repeat;
+}
+
+.loginpwd {
+	background: url(../image/login/pwd.png) no-repeat;
+}
+
+.login_btn {
+	width: 80px;
+	height: 25px;
+	background: url(../image/login/btn.png) no-repeat;
+	cursor: pointer;
+	margin-left: 65px;
+	border: none;
+	text-align: center;
+	color: #fff;
+	letter-spacing:5px;
+}
+
+.login_btn:focus {
+  outline: #414141 dotted thin;
+}
+
+/*系统首页界面样式*/
+.menu-bg {
+	background-color: #4c80d5;
+	width: 100%;
+	min-width: 960px;
+	border: none;
+	color: #353736;
+	height:65px;
+}
+
+.left-menu {
+	position:relative;
+	float:left;
+	width:70%;
+}
+
+.logo-img {
+	float:left;
+	position:absolute;
+	left:20px;
+	width:230px;
+	margin-top:15px;
+}
+
+
+.login_text {
+	position: absolute;
+	left: 100px;
+	font-size: 35px;
+	margin-top: 10px;
+	float:left;	
+}
+.logo-title {
+	position: absolute;
+	left: 40px;
+	font-size: 45px;
+	margin-top: 0px;
+	float:left;	
+}
+
+
+.right-menu {
+	position:relative;
+	float: right;
+	width:30%;
+}
+
+.right-menu ul {
+	position:absolute;
+	top:35px;
+	right:50px;
+	padding-right: 12px;
+}
+
+.right-menu ul li {
+	float: left;
+	padding-left: 9px;
+	padding-right: 9px;
+	background: url(../image/line.gif) no-repeat right;
+}
+
+.right-menu ul li:last-child {
+	background: none;
+}
+
+.right-menu ul li a {
+	font-size: 17px;
+	text-decoration: none;
+	color: #353736;
+}
+
+.right-menu ul li span {
+	background: url(../image/home/userIcon.png) no-repeat;
+	padding-left: 30px;
+	font-size: 17px;
+}
+
+/**系统首页网站声明**/
+#layout-wrapper{
+   position:relative;
+   height:100%;
+   display:block;
+}
+
+#footer {
+   height:25px;
+   line-height:25px;
+   text-align:center;
+   font-size:6px;
+}
+
+/**页面等待样式**/
+.loading {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 9900;
+}
+
+.loading-bg {
+	background: #eee;
+}

@@ -98,7 +98,7 @@
 		<!-- 数据源 -->
 		<property name="dataSource" ref="dataSource" />
 		<!-- mapper配置路径 -->
-		<property name="mapperLocations" value="classpath*:sqlmap/*Dao*.xml" />
+		<property name="mapperLocations" value="classpath*:**/*Mapper.xml" />
 	</bean>
 	
 </beans>

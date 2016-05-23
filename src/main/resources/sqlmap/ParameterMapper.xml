@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.dms.dao.ParameterMapper" >
+  <resultMap id="BaseResultMap" type="cn.dms.entity.Parameter" >
+    <result column="prm_code" property="prmCode" jdbcType="VARCHAR" />
+    <result column="prm_value" property="prmValue" jdbcType="VARCHAR" />
+    <result column="prm_lang" property="prmLang" jdbcType="VARCHAR" />
+    <result column="prm_name" property="prmName" jdbcType="VARCHAR" />
+    <result column="prm_showmsg" property="prmShowmsg" jdbcType="VARCHAR" />
+  </resultMap>
+   <sql id="baseColumnList" >
+    prm_code, prm_value, prm_lang, prm_name, prm_showmsg
+  </sql>
+  <insert id="insert" parameterType="cn.dms.entity.Parameter" >
+    insert into parameter (prm_code, prm_value, prm_lang, 
+      prm_name, prm_showmsg)
+    values (#{prmCode,jdbcType=VARCHAR}, #{prmValue,jdbcType=VARCHAR}, #{prmLang,jdbcType=VARCHAR}, 
+      #{prmName,jdbcType=VARCHAR}, #{prmShowmsg,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.dms.entity.Parameter" >
+    insert into parameter
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="prmCode != null" >
+        prm_code,
+      </if>
+      <if test="prmValue != null" >
+        prm_value,
+      </if>
+      <if test="prmLang != null" >
+        prm_lang,
+      </if>
+      <if test="prmName != null" >
+        prm_name,
+      </if>
+      <if test="prmShowmsg != null" >
+        prm_showmsg,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="prmCode != null" >
+        #{prmCode,jdbcType=VARCHAR},
+      </if>
+      <if test="prmValue != null" >
+        #{prmValue,jdbcType=VARCHAR},
+      </if>
+      <if test="prmLang != null" >
+        #{prmLang,jdbcType=VARCHAR},
+      </if>
+      <if test="prmName != null" >
+        #{prmName,jdbcType=VARCHAR},
+      </if>
+      <if test="prmShowmsg != null" >
+        #{prmShowmsg,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+    <!-- 自定义 -->  
+   
+  <select id="selectByParameter" parameterType="cn.dms.entity.Parameter" resultMap="BaseResultMap">
+    select 
+    	<include refid="baseColumnList" />
+    from 
+    	parameter where 1 = 1 
+    <if test="prmCode != null" >
+       and prm_code = #{prmCode,jdbcType=VARCHAR}
+    </if>
+    <if test="prmLang != null" >
+       and prm_lang = #{prmLang,jdbcType=VARCHAR}
+    </if>
+    order by prm_code,prm_value asc
+  </select>
+</mapper>

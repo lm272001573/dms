@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.dms.dao.UcRolePermissionMapper">
+	<resultMap id="BaseResultMap" type="cn.dms.entity.UcRolePermission">
+		<result column="role_code" property="roleCode" jdbcType="VARCHAR" />
+		<result column="res_code" property="resCode" jdbcType="VARCHAR" />
+	</resultMap>
+	<insert id="insert" parameterType="cn.dms.entity.UcRolePermission">
+		insert into uc_role_permission (role_code, res_code)
+		values (#{roleCode,jdbcType=VARCHAR}, #{resCode,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="cn.dms.entity.UcRolePermission">
+		insert into uc_role_permission
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="roleCode != null">
+				role_code,
+			</if>
+			<if test="resCode != null">
+				res_code,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="roleCode != null">
+				#{roleCode,jdbcType=VARCHAR},
+			</if>
+			<if test="resCode != null">
+				#{resCode,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+
+	<delete id="deleteByRoleCode" parameterType="java.lang.String">
+		delete from um_role_permission
+		where role_code=#{role_code,jdbcType=VARCHAR}
+	</delete>
+
+	<insert id="batchInsert" parameterType="java.util.List">
+		insert into um_role_permission (role_code,res_code)
+		values
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			(#{item.role_code,jdbcType=VARCHAR}, #{item.res_code,jdbcType=VARCHAR}
+			)
+		</foreach>
+	</insert>
+</mapper>

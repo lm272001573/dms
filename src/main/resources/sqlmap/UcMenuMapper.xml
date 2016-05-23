@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.dms.dao.UcMenuMapper" >
+  <resultMap id="BaseResultMap" type="cn.dms.entity.Menu" >
+    <result column="id" property="id" jdbcType="INTEGER" />
+    <result column="text" property="text" jdbcType="VARCHAR" />
+    <result column="action" property="action" jdbcType="VARCHAR" />
+    <result column="pid" property="pid" jdbcType="INTEGER" />
+    <result column="res_code" property="resCode" jdbcType="VARCHAR" />
+    <result column="icon" property="icon" jdbcType="VARCHAR" />
+    <result column="sort_code" property="sortCode" jdbcType="INTEGER" />
+  </resultMap>
+  <insert id="insert" parameterType="cn.dms.entity.Menu" >
+    insert into uc_menu (id, text, action, 
+      pid, res_code, icon, 
+      sort_code)
+    values (#{id,jdbcType=INTEGER}, #{text,jdbcType=VARCHAR}, #{action,jdbcType=VARCHAR}, 
+      #{pid,jdbcType=INTEGER}, #{resCode,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR}, 
+      #{sortCode,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.dms.entity.Menu" >
+    insert into uc_menu
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="text != null" >
+        text,
+      </if>
+      <if test="action != null" >
+        action,
+      </if>
+      <if test="pid != null" >
+        pid,
+      </if>
+      <if test="resCode != null" >
+        res_code,
+      </if>
+      <if test="icon != null" >
+        icon,
+      </if>
+      <if test="sortCode != null" >
+        sort_code,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="text != null" >
+        #{text,jdbcType=VARCHAR},
+      </if>
+      <if test="action != null" >
+        #{action,jdbcType=VARCHAR},
+      </if>
+      <if test="pid != null" >
+        #{pid,jdbcType=INTEGER},
+      </if>
+      <if test="resCode != null" >
+        #{resCode,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null" >
+        #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="sortCode != null" >
+        #{sortCode,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  
+  <select id="selectMenuByUserId" resultMap="BaseResultMap">
+	select * from (
+		select 
+			distinct a.id , a.text, a.pid, a.res_code ,a.action 
+		from 
+			uc_menu a ,
+			uc_menu b 
+		where 
+			a.id = b.pid
+		union
+		select 
+			m.id, m.text, m.pid, m.res_code,m.action 
+		from 
+			uc_menu m ,
+			uc_user_role u, 
+			uc_role_permission r, 
+			uc_permission p
+		where 
+			u.role_code = r.role_code 
+		and 
+			r.res_code = p.res_code 
+		and 
+			p.res_code = m.res_code
+		and 
+			p.res_type is null 
+		and 
+			u.user_id = #{userId} 
+	) t 
+	order by t.id
+	</select>
+
+	<!-- 查询所有菜单 -->
+	<select id="selectAllMenus" resultMap="BaseResultMap">
+	select * from (
+		select distinct 
+			a.id , a.text, a.pid, a.res_code ,a.action 
+		from 
+			uc_menu a ,
+			uc_menu b 
+		where 
+			a.id = b.pid
+		union
+		select 
+			b.id,b.text,b.pid,b.res_code,b.action 
+		from 
+			uc_permission a ,
+			uc_menu b 
+		where 
+			a.res_code = b.res_code
+		and 
+			a.res_type is null
+	) t 
+	order by t.id
+	</select>
+</mapper>
