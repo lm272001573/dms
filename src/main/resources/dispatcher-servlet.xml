@@ -16,7 +16,7 @@
     <context:property-placeholder location="classpath:dms.properties" />
     
     <!-- 对包中的所有类进行扫描，以完成Bean创建和自动依赖注入的功能 需要更改 -->
-    <context:component-scan base-package="cn.dms" >
+    <context:component-scan base-package="cn" >
     	<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service"/> 
     </context:component-scan>
 

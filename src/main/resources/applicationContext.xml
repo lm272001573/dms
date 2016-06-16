@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:task="http://www.springframework.org/schema/task"
 	xsi:schemaLocation="
         http://www.springframework.org/schema/beans
@@ -16,7 +17,7 @@
 	<context:property-placeholder location="classpath:dms.properties" />
 
 	<!-- 对包中的所有类进行扫描，以完成Bean创建和自动依赖注入的功能 需要更改 -->
-	<context:component-scan base-package="cn.dms" />
+	<context:component-scan base-package="cn" />
 
 	<!-- 线程池 -->
 	<bean id="taskExecutor"
@@ -41,8 +42,10 @@
 
 
 	<!-- 事务配置 -->
-	<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true" />
-	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+	<tx:annotation-driven transaction-manager="transactionManager"
+		proxy-target-class="true" />
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource"></property>
 	</bean>
 
@@ -53,11 +56,12 @@
 	</bean>
 
 	<!-- dataSource -->
-	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
+		init-method="init" destroy-method="close">
 		<!-- 基本属性 url、user、password -->
 		<property name="url" value="${jdbc.url}" />
 		<property name="username" value="${jdbc.username}" />
-		 <property name="password" value="${jdbc.password}" />
+		<property name="password" value="${jdbc.password}" />
 		<!-- 配置初始化大小、最小、最大 -->
 		<property name="initialSize" value="5" />
 		<property name="minIdle" value="5" />
@@ -83,7 +87,8 @@
 
 		<!-- 打开PSCache，并且指定每个连接上PSCache的大小 -->
 		<!-- <property name="poolPreparedStatements" value="false" /> -->
-		<property name="maxPoolPreparedStatementPerConnectionSize" value="20" />
+		<property name="maxPoolPreparedStatementPerConnectionSize"
+			value="20" />
 
 		<!-- 配置监控统计拦截的filters -->
 		<property name="filters" value="stat" />
@@ -100,5 +105,123 @@
 		<!-- mapper配置路径 -->
 		<property name="mapperLocations" value="classpath*:**/*Mapper.xml" />
 	</bean>
-	
+
+
+
+
+	<!-- ActiveMQ配置 -->
+	<!-- Spring提供的JMS工具类，它可以进行消息发送、接收等 -->
+	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<!-- 这个connectionFactory对应的是我们定义的Spring提供的那个ConnectionFactory对象 -->
+		<property name="connectionFactory" ref="connectionFactory" />
+	</bean>
+
+	<!-- 真正可以产生Connection的ConnectionFactory，由对应的 JMS服务厂商提供 -->
+	<bean id="targetConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+		<property name="brokerURL" value="tcp://localhost:61616" />
+	</bean>
+
+	<!-- Spring用于管理真正的ConnectionFactory的ConnectionFactory -->
+	<bean id="connectionFactory"
+		class="org.springframework.jms.connection.SingleConnectionFactory">
+		<!-- 目标ConnectionFactory对应真实的可以产生JMS Connection的ConnectionFactory -->
+		<property name="targetConnectionFactory" ref="targetConnectionFactory" />
+	</bean>
+
+	<!--这个是队列目的地 -->
+	<bean id="queueDestination" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg>
+			<value>queue</value>
+		</constructor-arg>
+	</bean>
+	<!--这个是sessionAwareQueue目的地 -->
+	<bean id="sessionAwareQueue" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg>
+			<value>sessionAwareQueue</value>
+		</constructor-arg>
+	</bean>
+	<!--这个是sessionAwareQueue目的地 -->
+	<bean id="adapterQueue" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg>
+			<value>adapterQueue</value>
+		</constructor-arg>
+	</bean>
+
+	<!-- 消息监听器 -->
+	<bean id="consumerMessageListener" class="cn.spring.jms.product.listener.ConsumerMessageListener" />
+	<!-- 可以获取session的MessageListener -->
+	<bean id="consumerSessionAwareMessageListener"
+		class="cn.spring.jms.product.listener.ConsumerSessionAwareMessageListener">
+		<property name="destination" ref="queueDestination" />
+	</bean>
+
+	<!-- 消息监听容器 -->
+	<bean id="jmsContainer"
+		class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+		<property name="connectionFactory" ref="connectionFactory" />
+		<property name="destination" ref="queueDestination" />
+		<property name="messageListener" ref="consumerMessageListener" />
+	</bean>
+
+
+	<bean id="sessionAwareListenerContainer"
+		class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+		<property name="connectionFactory" ref="connectionFactory" />
+		<property name="destination" ref="sessionAwareQueue" />
+		<property name="messageListener" ref="consumerSessionAwareMessageListener" />
+	</bean>
+
+	<bean id="messageListenerAdapter"
+		class="org.springframework.jms.listener.adapter.MessageListenerAdapter">
+		<property name="delegate">
+			<bean class="cn.spring.jms.product.listener.ConsumerListener" />
+		</property>
+		<property name="defaultListenerMethod" value="receiveMessage" />
+		<property name="defaultResponseDestination" ref="defaultResponseQueue"/>  
+	</bean>
+
+	<bean id="messageListenerAdapterContainer"
+		class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+		<property name="connectionFactory" ref="connectionFactory" />
+		<property name="destination" ref="adapterQueue" />
+		<property name="messageListener" ref="messageListenerAdapter" /><!-- 使用MessageListenerAdapter来作为消息监听器 -->
+		
+	</bean>
+
+	<!-- 用于测试消息回复的 -->
+	<bean id="defaultResponseQueue" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg>
+			<value>defaultResponseQueue</value>
+		</constructor-arg>
+	</bean>
+	<!-- defaultResponseQueue对应的监听器 -->
+	<bean id="defaultResponseQueueListener"
+		class="cn.spring.jms.product.listener.DefaultResponseQueueListener" />
+
+	<!-- defaultResponseQueue对应的监听容器 -->
+	<bean id="defaultResponseQueueMessageListenerContainer"
+		class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+		<property name="connectionFactory" ref="connectionFactory" />
+		<property name="destination" ref="defaultResponseQueue" />
+		<property name="messageListener" ref="defaultResponseQueueListener" />
+	</bean>
+
+
+	<!-- 用于测试消息回复的 -->
+	<bean id="responseQueue" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg>
+			<value>responseQueue</value>
+		</constructor-arg>
+	</bean>
+
+	<!-- responseQueue对应的监听器 -->
+	<bean id="responseQueueListener" class="cn.spring.jms.product.listener.ResponseQueueListener" />
+
+	<!-- responseQueue对应的监听容器 -->
+	<bean id="responseQueueMessageListenerContainer"
+		class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+		<property name="connectionFactory" ref="connectionFactory" />
+		<property name="destination" ref="responseQueue" />
+		<property name="messageListener" ref="responseQueueListener" />
+	</bean>
 </beans>
